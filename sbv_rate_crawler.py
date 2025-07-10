@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 
 # Configure logging
-LOG_FILE = '/var/log/crawler.log'
+LOG_FILE = './crawler.log'
 logging.basicConfig(filename=LOG_FILE,
                     level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -40,9 +40,9 @@ def fetch_rates(url: str):
         cells = [c.get_text(strip=True) for c in row.find_all(['th', 'td'])]
         if not cells:
             continue
-        if 'O/N' in cells[0]:
+        if 'Qua đêm' in cells[0]:
             on_rate = parse_rate(cells[1])
-        elif '1W' in cells[0] or '1 Tuần' in cells[0]:
+        elif '1 Tuần' in cells[0] or '1 Tuần' in cells[0]:
             onew_rate = parse_rate(cells[1])
         if on_rate is not None and onew_rate is not None:
             break
@@ -75,7 +75,7 @@ def save_rate(conn_params, date, on_rate, onew_rate):
         conn.close()
 
 def main():
-    url = 'https://sbv.gov.vn/lai-suat-lien-ngan-hang'
+    url = 'https://dttktt.sbv.gov.vn/webcenter/portal/vi/menu/rm/ls?_afrLoop=27577028507114755#%40%3F_afrLoop%3D27577028507114755%26centerWidth%3D80%2525%26leftWidth%3D20%2525%26rightWidth%3D0%2525%26showFooter%3Dfalse%26showHeader%3Dfalse%26_adf.ctrl-state%3D3nf23c1cp_4'
     try:
         date, on_rate, onew_rate = fetch_rates(url)
     except Exception as exc:
